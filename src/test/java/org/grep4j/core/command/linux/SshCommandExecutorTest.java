@@ -14,6 +14,7 @@ import net.schmizz.sshj.connection.channel.direct.Session.Command;
 import net.schmizz.sshj.transport.verification.PromiscuousVerifier;
 
 import org.easymock.EasyMock;
+import org.grep4j.core.command.ExecutableCommand;
 import org.grep4j.core.fixtures.ServerDetailsFixtures;
 import org.grep4j.core.model.ServerDetails;
 import org.testng.annotations.Test;
@@ -74,7 +75,7 @@ public class SshCommandExecutorTest {
 		expect(sshClient.startSession()).andReturn(session);
 		expect(session.exec(eq(COMMAND_TO_EXECUTE))).andReturn(command);
 		expect(command.getInputStream()).andReturn(
-				new ByteArrayInputStream(new String("Whatever").getBytes()));
+				new ByteArrayInputStream("Whatever".getBytes()));
 
 		// Command cmd = session.exec(command.getCommandToExecute());
 		// result = IOUtils.readFully(cmd.getInputStream()).toString();
@@ -82,7 +83,7 @@ public class SshCommandExecutorTest {
 
 		replay(sshClient);
 
-		executor.execute(new LinuxCommand() {
+		executor.execute(new ExecutableCommand() {
 			@Override
 			public String getCommandToExecute() {
 				return COMMAND_TO_EXECUTE;

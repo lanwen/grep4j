@@ -1,10 +1,10 @@
 package org.grep4j.core.command.linux.ls;
 
-import org.grep4j.core.command.linux.LinuxCommand;
+import org.grep4j.core.command.ExecutableCommand;
 import org.grep4j.core.model.Profile;
 
 /**
- * {@link LsCommand} is a {@link LinuxCommand} object that build the command to list files.
+ * {@link LsCommand} is a {@link ExecutableCommand} object that build the command to list files.
  * It's used in case a wildcard is specified.
  * 
  * Example: "ls /tmp/server.log*"
@@ -13,7 +13,7 @@ import org.grep4j.core.model.Profile;
  * @author Giovanni Gargiulo
  *
  */
-public class LsCommand implements LinuxCommand {
+public class LsCommand implements ExecutableCommand {
 
 	private static final String LS_COMMAND = "ls";
 	private static final String BLANK = " ";
@@ -22,26 +22,17 @@ public class LsCommand implements LinuxCommand {
 
 	private final String fileAbsolutePath;
 
-	private String wildcard;
+	private final String wildcard;
 
 	public LsCommand(Profile profile) {
 		this.profile = profile;
-		this.fileAbsolutePath = getFileAbsolutePath();
-		this.wildcard = "";
-	}
-
-	/**
-	 * If profile.getFileLocation() does not end with "/", this method will insert "/"
-	 * between the fileLocation and the fileName; 
-	 * 
-	 * @return the absolute path of the file to grep
-	 */
-	public String getFileAbsolutePath() {
-		String separator = "/";
-		if (profile.getFileLocation().endsWith("/")) {
-			separator = "";
+		this.fileAbsolutePath = profile.getFilePath();
+		if(profile.getWildcard() != null && !profile.getWildcard().isEmpty()){
+			this.wildcard = profile.getWildcard();
+		}else{
+			this.wildcard = "";
 		}
-		return profile.getFileLocation() + separator + profile.getFileName();
+		
 	}
 
 	@Override
@@ -52,10 +43,6 @@ public class LsCommand implements LinuxCommand {
 		command.append(fileAbsolutePath);
 		command.append(wildcard);
 		return command.toString();
-	}
-
-	public void addWildcard(String wildcard) {
-		this.wildcard = wildcard;
 	}
 
 }
