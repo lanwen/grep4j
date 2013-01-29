@@ -76,12 +76,16 @@ public class GrepTask implements Callable<List<GrepResult>> {
 	private void prepareGrepCommands() {
 		for (String filename : matchingFiles) {
 			AbstractGrepCommand grep;
+			if (filename.trim().isEmpty()) {
+				continue;
+			}
 			if (isGz(filename)) {
 				grep = new GzGrepCommand(grepRequest.getExpression(), filename, grepRequest.isRegexExpression());
 			} else {
 				grep = new SimpleGrepCommand(grepRequest.getExpression(), filename, grepRequest.isRegexExpression());
 			}
 			grep.setContextControls(grepRequest.getContextControls());
+			grep.setTailContextControls(grepRequest.getTailContextControls());
 			grepList.add(grep);
 		}
 	}
